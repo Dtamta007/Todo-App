@@ -25,10 +25,10 @@ router.post('/register', async (req,res)=>{
 
         const user = await newUser.save();
         console.log(user);
-        res.status(200).json(user);
+        res.status(200).json({user: user, message: {msgBody: "User Registered Successfully", msgError: false}});
     }catch(err){
         console.log(err);
-        res.status(500).json({message: {msgBody: err, msgError: true}});
+        res.status(500).json({message: {msgBody: "An Error Occured", msgError: true}});
     }
 })
 
@@ -37,7 +37,7 @@ router.post('/login', passport.authenticate('local', {session:false}), (req,res)
         const {_id, username, role} = req.user;
         const token = signToken(_id);
         res.cookie("access_token", token, {httpOnly:true, sameSite:true});
-        res.status(200).json({isAuthenticated:true, User: {username, role}, token: token});
+        res.status(200).json({isAuthenticated:true, user: {username, role}, token: token});
     }
 })
 
@@ -81,7 +81,7 @@ router.get('/admin',passport.authenticate('jwt', {session:false}),(req,res)=>{
 
 router.get('/authenticated',passport.authenticate('jwt', {session:false}),(req,res)=>{
     const {username, role} = req.user;
-    res.status(200).json({isAuthenticated: true, user: {username,role}});
+    res.status(200).json({isAuthenticated: true, username,role});
 })
 
 module.exports = router;
